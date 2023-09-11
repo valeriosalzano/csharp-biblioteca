@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,9 +9,9 @@ namespace csharp_biblioteca
 {
     public class Library
     {
-        public List<Document> Documents;
-        public List<User> Users;
-        public List<Loan> Loans;
+        private List<Document> Documents;
+        private List<User> Users;
+        private List<Loan> Loans;
 
         // CONSTRUCTOR
         public Library() 
@@ -35,18 +36,18 @@ namespace csharp_biblioteca
 
         public User GetUser(string name, string surname)
         {
-            List<User> results = Users.FindAll(user => (user.Name == name && user.Surname == surname));
+            List<User> results = this.Users.FindAll(user => (user.Name == name && user.Surname == surname));
 
             if(results.Count == 0)
             {
                 // TODO exception needed
-                return results[0];
+                return null;
             }
             else if(results.Count > 1) // case of homonymy
             {
                 Console.WriteLine("Ci sono più utenti con lo stesso nome. Consigliamo la ricerca per email");
-                //TODO select from possible users
-                return results[0];
+                //TODO exception neeeded
+                return null;
             }
             else
             {
@@ -59,22 +60,76 @@ namespace csharp_biblioteca
             return this.Users.Find(user => user.Email == email);
         }
 
-        // METHODS
-        public void AddLoan(string userEmail, string documentId, DateTime startDate, DateTime endDate)
+        public List<Loan> GetLoans(string name, string surname)
         {
-            //checking if user is subscribed
-            if (this.Users.Find(user => user.Email == userEmail) != null) // success
+            User user = this.GetUser(name, surname);
+            if(user == null)
             {
-                //TODO some possible checks (book already lent, loans limit, unavailable dates)
-                this.Loans.Add(new Loan(userEmail, documentId, startDate, endDate));
-                
+                return null; // TODO exception needed
+            }
+            return this.Loans.FindAll(loan => loan.UserEmail == user.Email);
+        }
+        public List<Loan> GetLoans(string email)
+        {
+            return this.Loans.FindAll(loan => loan.UserEmail == email);
+        }
 
-            } else // fail
-            {
+        // METHODS
+        public void AddLoan(string userEmail, string userDocument, DateTime startDate)
+        {
+            if (this.Users.Find(user => user.Email == userEmail) == null) // subscribed check
                 Console.WriteLine("Il prestito è consentito solo agli utenti registrati.");
+            else 
+            {
+                Document document = this.GetDocumentByID(userDocument);
+                if (document == null) // found by id check
+                    document = this.GetDocumentByTitle(userDocument);
+                if (document == null) // found by title check
+                {
+                    Console.WriteLine("Il documento non è stato trovato.");
+                    return;
+                }
+                if (document.isLent) //isLent check
+                    Console.WriteLine("Il documento è stato già prestato.");
+                else
+                {
+                    document.isLent = true;
+                    this.Loans.Add(new Loan(userEmail, document.ID, startDate));
+                }
             }
         }
 
+        public void CloseLoan(string userEmail, string userDocument, DateTime endDate)
+        {
+            if (this.Users.Find(user => user.Email == userEmail) == null) // subscribed check
+                Console.WriteLine("Il prestito è consentito solo agli utenti registrati.");
+            else
+            {
+                Document document = this.GetDocumentByID(userDocument);
+
+                if (document == null) // document found by id check
+                    document = this.GetDocumentByTitle(userDocument);
+                if (document == null) // document found by title check
+                {
+                    Console.WriteLine("Il documento non è stato trovato.");
+                    return;
+                }
+
+                Loan loan = this.Loans.FindLast(loan => (loan.DocumentId == document.ID && loan.UserEmail == userEmail));
+                if (loan == null) // loan found check
+                    Console.WriteLine("Il prestito non è stato trovato.");
+                else
+                {
+                    if (!document.isLent) //isLent check
+                        Console.WriteLine("Il documento risulta rientrato.");
+                    else
+                    {
+                        loan.LoanEndDate = endDate;
+                        document.isLent = false;
+                    }
+                }
+            }
+        }
         public void AddUser(User user)
         {
             //checking already existing email
