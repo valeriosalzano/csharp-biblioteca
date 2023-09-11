@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace csharp_biblioteca
 {
-    internal class Loan
+    public class Loan
     {
         // PROPERTIES
-        public User User { get; set; }
-        public Document Document { get; set; }
-        public string LoanStartDate { get; set; }
-        public string LoanEndDate { get; set; }
+        public string UserEmail { get; set; }
+        public string DocumentId { get; set; }
+        public DateTime LoanStartDate { get; set; }
+        public DateTime LoanEndDate { get; set; }
 
         // CONSTRUCTORS
-        public Loan(User user, Document document, string startDate, string endDate)
+        public Loan(string userEmail, string documentId, DateTime startDate, DateTime endDate)
         {
-            this.User = user;
-            this.Document = document;
+            this.UserEmail = userEmail;
+            this.DocumentId = documentId;
             this.LoanStartDate = startDate;
             this.LoanEndDate = endDate;
 

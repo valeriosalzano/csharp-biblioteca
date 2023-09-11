@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace csharp_biblioteca
 {
-    internal class Document
+    public class Document
     {
         // PROPERTIES
         public string ID { get; private set; }

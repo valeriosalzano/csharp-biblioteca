@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace csharp_biblioteca
 {
-    internal class User
+    public class User
     {
         // PROPERTIES
         public string Name { get; private set; }
