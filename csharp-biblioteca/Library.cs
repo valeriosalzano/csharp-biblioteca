@@ -33,9 +33,30 @@ namespace csharp_biblioteca
             return this.Documents.Find(document => document.Title == title);
         }
 
-                public User GetUser(string name, string surname)
+        public User GetUser(string name, string surname)
         {
+            List<User> results = Users.FindAll(user => (user.Name == name && user.Surname == surname));
 
+            if(results.Count == 0)
+            {
+                // TODO exception needed
+                return results[0];
+            }
+            else if(results.Count > 1) // case of homonymy
+            {
+                Console.WriteLine("Ci sono più utenti con lo stesso nome. Consigliamo la ricerca per email");
+                //TODO select from possible users
+                return results[0];
+            }
+            else
+            {
+                return results[0];
+            }
+        }
+        public User GetUser(string email)
+        {
+            // TODO possible null return
+            return this.Users.Find(user => user.Email == email);
         }
 
         // METHODS
