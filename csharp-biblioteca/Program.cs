@@ -5,18 +5,12 @@
         static void Main(string[] args)
         {
             //seeders
-            Library myLibrary = new Library();
-            myLibrary.Users = User.UserSeeder();
-            List<Book> books = Book.BooksSeeder(10);
-            foreach (Book book in books)
-            {
-                myLibrary.Documents.Add(book);
-            }
-            List<DVD> dvds = DVD.DVDsSeeder(10);
-            foreach(DVD d in dvds)
-            {
-                myLibrary.Documents.Add(d);
-            }
+
+            List<Document> documents = new List<Document>();
+            documents.AddRange(Book.BooksSeeder(10));
+            documents.AddRange(DVD.DVDsSeeder(10));
+
+            Library myLibrary = new Library( documents, User.UserSeeder());
 
             //program start
             bool exitProgram = false;
@@ -171,7 +165,7 @@
                                 Console.WriteLine(Environment.NewLine + "--- Stampa prestiti ---" + Environment.NewLine);
 
                                 List<Loan> loansList = myLibrary.GetLoans(loggedUser.Email);
-                                if (loansList.Count > 1)
+                                if (loansList.Count >= 1)
                                 {
                                     foreach (Loan loan in loansList)
                                         Console.WriteLine("----------" + loan.ToString());

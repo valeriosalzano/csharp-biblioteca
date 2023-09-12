@@ -23,7 +23,7 @@ namespace csharp_biblioteca
         // CONSTRUCTORS
         public Document(string title, int year, string subject, string shelf, Author author)
         {
-            this.ID = SetRandomID(8);
+            SetRandomID(8);
 
             this.Title = title;
             this.Year = year;
@@ -33,7 +33,7 @@ namespace csharp_biblioteca
         }
         // SETTERS
 
-        private string SetRandomID(int n)
+        private void SetRandomID(int n)
         {
             string randomID = "";
 
@@ -42,21 +42,21 @@ namespace csharp_biblioteca
             {
                 randomID += chars[new Random().Next(0, chars.Length)];
             }
-            return randomID;
+            this.ID = randomID;
         }
 
         // METHODS
         public override string ToString()
         {
-return @$"
-Informazioni sul documento:
-ID : {this.ID}
-Titolo: {this.Title}
-Anno: {this.Year}
-Settore: {this.Subject}
-Scaffale: {this.Shelf}
-Autore: {this.Author.Name} {this.Author.Surname}
-";
+            return @$"
+            Informazioni sul documento:
+            ID : {this.ID}
+            Titolo: {this.Title}
+            Anno: {this.Year}
+            Settore: {this.Subject}
+            Scaffale: {this.Shelf}
+            Autore: {this.Author.Name} {this.Author.Surname}
+            ";
         }
 
         

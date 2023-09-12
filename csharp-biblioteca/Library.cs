@@ -20,6 +20,12 @@ namespace csharp_biblioteca
             this.Users = new List<User>();
             this.Loans = new List<Loan>();
         }
+        public Library(List<Document> documents, List<User> users)
+        {
+            this.Documents = documents;
+            this.Users = users;
+            this.Loans = new List<Loan>();
+        }
 
         // GETTER
         public Document GetDocumentByID(string id)
@@ -36,14 +42,14 @@ namespace csharp_biblioteca
 
         public User GetUser(string name, string surname)
         {
-            List<User> results = this.Users.FindAll(user => (user.Name == name && user.Surname == surname));
+            List<User> users = this.Users.FindAll(user => (user.Name == name && user.Surname == surname));
 
-            if(results.Count == 0)
+            if(users.Count == 0)
             {
                 // TODO exception needed
                 return null;
             }
-            else if(results.Count > 1) // case of homonymy
+            else if(users.Count > 1) // case of homonymy
             {
                 Console.WriteLine("Ci sono più utenti con lo stesso nome. Consigliamo la ricerca per email");
                 //TODO exception neeeded
@@ -51,7 +57,7 @@ namespace csharp_biblioteca
             }
             else
             {
-                return results[0];
+                return users[0];
             }
         }
         public User GetUser(string email)
@@ -75,20 +81,21 @@ namespace csharp_biblioteca
         }
 
         // METHODS
-        public void AddLoan(string userEmail, string userDocument, DateTime startDate)
+        public void AddLoan(string userEmail, string documentParam, DateTime startDate)
         {
             if (this.Users.Find(user => user.Email == userEmail) == null) // subscribed check
                 Console.WriteLine("Il prestito è consentito solo agli utenti registrati.");
             else 
             {
-                Document document = this.GetDocumentByID(userDocument);
+                Document document = this.GetDocumentByID(documentParam);
                 if (document == null) // found by id check
-                    document = this.GetDocumentByTitle(userDocument);
+                    document = this.GetDocumentByTitle(documentParam);
                 if (document == null) // found by title check
                 {
                     Console.WriteLine("Il documento non è stato trovato.");
                     return;
                 }
+
                 if (document.isLent) //isLent check
                     Console.WriteLine("Il documento è stato già prestato.");
                 else
@@ -99,16 +106,16 @@ namespace csharp_biblioteca
             }
         }
 
-        public void CloseLoan(string userEmail, string userDocument, DateTime endDate)
+        public void CloseLoan(string userEmail, string documentParam, DateTime endDate)
         {
             if (this.Users.Find(user => user.Email == userEmail) == null) // subscribed check
                 Console.WriteLine("Il prestito è consentito solo agli utenti registrati.");
             else
             {
-                Document document = this.GetDocumentByID(userDocument);
+                Document document = this.GetDocumentByID(documentParam);
 
                 if (document == null) // document found by id check
-                    document = this.GetDocumentByTitle(userDocument);
+                    document = this.GetDocumentByTitle(documentParam);
                 if (document == null) // document found by title check
                 {
                     Console.WriteLine("Il documento non è stato trovato.");

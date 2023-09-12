@@ -31,7 +31,7 @@ Email utente: {this.UserEmail}
 ID documento: {this.DocumentId}
 Prestato dal: {this.LoanStartDate}
 Al: {(this.LoanEndDate==DateTime.MinValue? "non rientrato":this.LoanEndDate)}
-";
+            ";
         }
     }
 }
